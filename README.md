@@ -1,4 +1,3 @@
-```markdown
 # KneeSync AI – Real‑Time Knee Angle Prediction with Tube Loss
 
 This project reproduces and improves the CNN‑LSTM transfer learning framework for **real‑time knee angle prediction** from 4‑channel surface EMG signals, as described in **Mollahossein et al. (2024)**.  
@@ -47,34 +46,7 @@ It introduces **Tube Loss** (Anand et al., 2025) to provide **calibrated predict
 - **DIC + Tube Loss** delivers reliable intervals with minimal point accuracy loss. The best result: **PICP = 0.942, NMPIW = 5.33%, NMAE = 1.05%** on abnormal subjects.  
 - Full evaluation (11 subjects each) is in `knee_tube_loss_v2.ipynb`.
 
-Read the detailed reports in `/reports` for more insights.
-
----
-
-## 📁 Repository Structure
-
-```
-kneesync-ai/
-├── README.md                      ← You are here
-├── requirements.txt               # Python dependencies
-├── knee_tube_loss_v2.ipynb        # Main notebook (preprocessing, training, evaluation)
-├── index.html                     # Live demo frontend
-├── server.py                      # FastAPI backend for DIC + Tube Loss inference
-├── checkpoints/                   # Trained model weights
-│   ├── pretrained_sic_tube_final.pt
-│   ├── s2_dic_abnormal_loo10.pt   # (used in demo)
-│   └── README_checkpoints.md
-├── reports/
-│   ├── knee_prediction_report.pdf # MSE baseline reproduction report
-│   └── tube_loss_report.pdf       # Tube Loss integration & results
-└── figures/                       # (optional, for plots)
-```
-
----
-
-## 🚀 Installation
-
-### 1. Clone the repository
+1. Clone the repository
 ```bash
 git clone https://github.com/YourUsername/kneesync-ai.git
 cd kneesync-ai
@@ -152,56 +124,3 @@ The live demo shows real‑time knee angle prediction using the **best DIC + Tub
 1. Open `index.html` in any browser.
 2. Replace the `apiUrl` inside the `<script>` tag with your ngrok URL (keep `/predict` at the end).
 3. Use the sliders or click a **preset** (Swing / Stance / Stair Climb) – the chart updates automatically with predictions from the real model.
-
-> ⚠️ The ngrok URL changes each time you restart the Colab runtime. Update it in `index.html` accordingly.
-
----
-
-## 📦 requirements.txt (exact content)
-
-```
-torch>=2.0
-numpy
-scipy
-scikit-learn
-matplotlib
-tqdm
-fastapi
-uvicorn
-pyngrok
-```
-
----
-
-## 🔍 Detailed Documentation
-
-- **Reproduction Report** (`reports/knee_prediction_report.pdf`):  
-  Describes the baseline MSE implementation, six critical engineering fixes, and point‑estimate results compared to the original paper.
-
-- **Tube Loss Report** (`reports/tube_loss_report.pdf`):  
-  Explains Tube Loss theory, integration into the pipeline, interval metrics, and conformal calibration experiments.
-
-For any questions, feel free to open an issue on this repository.
-
----
-
-## 🛠️ How to Use the Application
-
-### For research / reproducibility
-- Run the notebook end‑to‑end. It will preprocess data, train models, evaluate, and produce result tables and plots.
-
-### For inference on new data
-- Use the `predict` endpoint in `server.py`. Send a POST request to `/predict` with a JSON body:
-  ```json
-  {
-    "emg": [[0.6, 0.62, ...], ...],   // 4 channels × 200 samples
-    "knee_hist": [30.0, 29.8, ...]    // 200 past knee angles (degrees)
-  }
-  ```
-  The response contains `mu1`, `mu2`, and `midpoint` (all in degrees).
-
-### For clinical / real‑time use
-- Connect a real‑time EMG acquisition system and a goniometer.  
-- Stream the preprocessed 200‑sample windows to the FastAPI server.  
-- The model returns a prediction interval and midpoint for the next time step.
-
